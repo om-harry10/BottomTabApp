@@ -107,19 +107,19 @@ function Home ({navigation}) {
     }
 }
 
-  const onScroll = event => {
-    RecyclerListView.initialOffset;
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    let dif = currentOffset - RecyclerListView.initialOffset;
+  // const onScroll = event => {
+  //   RecyclerListView.initialOffset;
+  //   const currentOffset = event.nativeEvent.contentOffset.y;
+  //   let dif = currentOffset - RecyclerListView.initialOffset;
 
-    if (dif < 0) {
-      navigation.setParams({showTabBar: true});
-    } else {
-      navigation.setParams({showTabBar: false});
-    }
+  //   if (dif < 0) {
+  //     navigation.setParams({showTabBar: true});
+  //   } else {
+  //     navigation.setParams({showTabBar: false});
+  //   }
 
-    RecyclerListView.initialOffset = currentOffset;
-  };
+  //   RecyclerListView.initialOffset = currentOffset;
+  // };
 
  
   return (
@@ -128,7 +128,7 @@ function Home ({navigation}) {
           rowRenderer={rowRender} 
           dataProvider={dataProvider}
           layoutProvider={layoutProvider}  
-          onScroll={e => onScroll(e)}
+          //onScroll={e => onScroll(e)}
           
                               >
     
@@ -151,7 +151,7 @@ function Screen2() {
   );
 }
 
-function App() {
+function Test() {
   const isTabBarVisible = navState => {
     if (!navState) {
       return true;
@@ -246,4 +246,4 @@ const styles = StyleSheet.create({
     
 },
 });
-export default App;
+export default Test;
