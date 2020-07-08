@@ -2,139 +2,153 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Text, View, StyleSheet, Dimensions} from 'react-native';
+import {Text, View, StyleSheet, Dimensions, FlatList} from 'react-native';
 
 //import { ScrollView } from 'react-native-gesture-handler';
-import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
+//import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 
-
-const countries = [
-    {    type:'Normal',
-         values:{
-                country: 'India',
-                capital: 'New Delhi',
-            },
-    },
-    {
-            type:'Normal',
-            values:{
-                country: 'USA ',
-                capital: 'Washington DC',
-            },
-          },{
-            type:'Normal',
-         values:
-            {
-                country: 'Sri Lanka',
-                capital: 'Colombo',
-            },
-          },{
-            type:'Normal',
-         values:
-            {
-                country: 'Germany ',
-                capital: 'Berlin',
-            },
-          },{
-            type:'Normal',
-         values:
-            {
-                country: 'China ',
-                capital: 'Beijing',
-            },
-          },{
-            type:'Normal',
-         values:
-            {
-                country: 'Russia',
-                capital: 'Moscow',
-            },
-          },{
-            type:'Normal',
-         values:
-            {
-                country: 'Argentina',
-                capital: 'Bueno aires',
-            },
-          },{
-            type:'Normal',
-         values:
-            {
-                country: 'Japan',
-                capital: 'Tokyo',
-            },
-          },
-           
-];
+const countries= [
+  {
+      country: 'India',
+      capital: 'New Delhi',
+  },
+  {
+      country: 'USA ',
+      capital: 'Washington DC',
+  },
+  {
+      country: 'Sri Lanka',
+      capital: 'Colombo',
+  },
+  {
+      country: 'Germany ',
+      capital: 'Berlin',
+  },
+  {
+      country: 'China ',
+      capital: 'Beijing',
+  },
+  {
+      country: 'Russia',
+      capital: 'Moscow',
+  },
+  {
+      country: 'Argentina',
+      capital: 'Bueno aires',
+  },
+  {
+      country: 'Japan',
+      capital: 'Tokyo',
+  },
+  {
+    country: 'Sri Lanka',
+    capital: 'Colombo',
+},
+{
+    country: 'Germany ',
+    capital: 'Berlin',
+},
+{
+    country: 'China ',
+    capital: 'Beijing',
+},
+{
+    country: 'Russia',
+    capital: 'Moscow',
+},
+{
+    country: 'Argentina',
+    capital: 'Bueno aires',
+},
+{
+    country: 'Japan',
+    capital: 'Tokyo',
+},
+]
 
 const Tab = createBottomTabNavigator();
 let {height, width} = Dimensions.get("window");
 function Home ({navigation}) {
     
 
-     dataProvider = new DataProvider((r1, r2) => {
-        return r1 !== r2;
-    }).cloneWithRows(countries);
+    //  dataProvider = new DataProvider((r1, r2) => {
+    //     return r1 !== r2;
+    // }).cloneWithRows(countries);
 
-     layoutProvider = new LayoutProvider((i) => {
-        return dataProvider.getDataForIndex(i).type;
-    }, (type,  dim) => {
-        switch(type){
-            case "Normal":
-                dim.width= width;
-                dim.height= 100;
-                break;
+    //  layoutProvider = new LayoutProvider((i) => {
+    //     return dataProvider.getDataForIndex(i).type;
+    // }, (type,  dim) => {
+    //     switch(type){
+    //         case "Normal":
+    //             dim.width= width;
+    //             dim.height= 100;
+    //             break;
             
-            default:
-                dim.width=0;
-                dim.height=0;
-                break;
-        };
-    })
+    //         default:
+    //             dim.width=0;
+    //             dim.height=0;
+    //             break;
+    //     };
+    // })
     
-    const rowRender= (type,data)=>{
-        const {country , capital} = data.values;
-        switch (type) {
-        case "Normal":
-         return(
-            <View style={styles.display}>
-                <Text style={styles.text}>{country}</Text>
-                <Text style={styles.text}>{capital}</Text>
-             </View>
-        );
+    // const rowRender= (type,data)=>{
+    //     const {country , capital} = data.values;
+    //     switch (type) {
+    //     case "Normal":
+    //      return(
+    //         <View style={styles.display}>
+    //             <Text style={styles.text}>{country}</Text>
+    //             <Text style={styles.text}>{capital}</Text>
+    //          </View>
+    //     );
         
         
+    
+
+
+  const onScroll = event => {
+    
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    let dif = currentOffset - FlatList.Offset;
+
+    if (dif < 0) {
+      navigation.setParams({showTabBar: true});
+    } else {
+      navigation.setParams({showTabBar: false});
     }
-}
 
-  // const onScroll = event => {
-  //   RecyclerListView.initialOffset;
-  //   const currentOffset = event.nativeEvent.contentOffset.y;
-  //   let dif = currentOffset - RecyclerListView.initialOffset;
-
-  //   if (dif < 0) {
-  //     navigation.setParams({showTabBar: true});
-  //   } else {
-  //     navigation.setParams({showTabBar: false});
-  //   }
-
-  //   RecyclerListView.initialOffset = currentOffset;
-  // };
+    FlatList.Offset = currentOffset;
+  };
 
  
-  return (
-    <View style={styles.container}>
-      <RecyclerListView 
-          rowRenderer={rowRender} 
-          dataProvider={dataProvider}
-          layoutProvider={layoutProvider}  
-          //onScroll={e => onScroll(e)}
+  // return (
+  //   <View style={styles.container}>
+  //     <RecyclerListView 
+  //         rowRenderer={rowRender} 
+  //         dataProvider={dataProvider}
+  //         layoutProvider={layoutProvider}  
+  //         //onScroll={e => onScroll(e)}
           
-                              >
+  //                             >
     
-      </RecyclerListView>
-    </View>
-  );
+  //     </RecyclerListView>
+  //   </View>
+  // );
+
+  return(
+        <View style={{height:'100%', width:'100%'}}>
+            <FlatList
+              onScroll={e => onScroll(e)}
+              data={countries}
+              renderItem={({item})=>(
+                <View style={styles.display}>
+                  <Text style={styles.text}>{item.country}</Text>
+                  <Text style={styles.text}>{item.capital}</Text>
+                </View>
+              )}
+             />
+        </View>
+  )
 }
 function Screen1() {
   return (
