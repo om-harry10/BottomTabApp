@@ -1,170 +1,95 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Text, View, StyleSheet, Dimensions, FlatList} from 'react-native';
-
+import countries from './src/Countries.js';
 //import { ScrollView } from 'react-native-gesture-handler';
-//import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
-
-const countries= [
-  { 
-      key:1,
-      country: 'India',
-      capital: 'New Delhi',
-  },
-  {
-      key:2,
-      country: 'USA ',
-      capital: 'Washington DC',
-  },
-  {
-    key:3,  
-    country: 'Sri Lanka',
-      capital: 'Colombo',
-  },
-  {
-    key:4,
-      country: 'Germany ',
-      capital: 'Berlin',
-  },
-  {
-      key:5,
-      country: 'China ',
-      capital: 'Beijing',
-  },
-  {
-    key:6,
-      country: 'Russia',
-      capital: 'Moscow',
-  },
-  {
-    key:7, 
-    country: 'Argentina',
-      capital: 'Bueno aires',
-  },
-  {
-      key:8,  
-    country: 'Japan',
-      capital: 'Tokyo',
-  },
-  {
-    key:9,
-    country: 'Sri Lanka',
-    capital: 'Colombo',
-},
-{
-  key:10,
-    country: 'Germany ',
-    capital: 'Berlin',
-},
-{
-    key:11,
-    country: 'China ',
-    capital: 'Beijing',
-},
-{
-  key:12,
-    country: 'Russia',
-    capital: 'Moscow',
-},
-{
-  key:13,
-    country: 'Argentina',
-    capital: 'Bueno aires',
-},
-{
-  key:14,
-    country: 'Japan',
-    capital: 'Tokyo',
-},
-]
+import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 
 const Tab = createBottomTabNavigator();
-let {height, width} = Dimensions.get("window");
-function Home ({navigation}) {
-    
+let { height, width } = Dimensions.get("window");
+// ({navigation})
 
-    //  dataProvider = new DataProvider((r1, r2) => {
-    //     return r1 !== r2;
-    // }).cloneWithRows(countries);
 
-    //  layoutProvider = new LayoutProvider((i) => {
-    //     return dataProvider.getDataForIndex(i).type;
-    // }, (type,  dim) => {
-    //     switch(type){
-    //         case "Normal":
-    //             dim.width= width;
-    //             dim.height= 100;
-    //             break;
-            
-    //         default:
-    //             dim.width=0;
-    //             dim.height=0;
-    //             break;
-    //     };
-    // })
+
+
+class Home extends Component  {
     
-    // const rowRender= (type,data)=>{
-    //     const {country , capital} = data.values;
-    //     switch (type) {
-    //     case "Normal":
-    //      return(
-    //         <View style={styles.display}>
-    //             <Text style={styles.text}>{country}</Text>
-    //             <Text style={styles.text}>{capital}</Text>
-    //          </View>
-    //     );
+  constructor(args) {
+    super(args);
+    this.Offset = 0;
+  
+    const dataProvider = new DataProvider((r1, r2) => {
+      return r1.key !== r2.key;
+    })
+    
+    this._layoutProvider = new LayoutProvider((i) => 'N', (type, dim) => {
+      switch (type) {
+        case "N":
+          dim.width = width;
+          dim.height = 100;
+          break;
         
-        
+        default:
+          dim.width = 0;
+          dim.height = 0;
+          break;
+      };
+    })
+  
     
-
-
-  const onScroll = event => {
+    this.state = {
+      dataProvider: dataProvider.cloneWithRows(countries)
+    }
     
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    let dif = currentOffset - FlatList.Offset;
-
-    if (dif < 0) {
-      navigation.setParams({showTabBar: true});
-    } else {
-      navigation.setParams({showTabBar: false});
+    this._rowRender = (type, data) => {
+      const { country, capital } = data;
+      switch (type) {
+        case "N":
+          return (
+            <View style={styles.display}>
+              <Text style={styles.text}>{country}</Text>
+              <Text style={styles.text}>{capital}</Text>
+            </View>
+          );
+      }
     }
 
-    FlatList.Offset = currentOffset;
-  };
-
- 
-  // return (
-  //   <View style={styles.container}>
-  //     <RecyclerListView 
-  //         rowRenderer={rowRender} 
-  //         dataProvider={dataProvider}
-  //         layoutProvider={layoutProvider}  
-  //         //onScroll={e => onScroll(e)}
-          
-  //                             >
+    this._onScroll = event => {
     
-  //     </RecyclerListView>
-  //   </View>
-  // );
+      const currentOffset = event.nativeEvent.contentOffset.y;
+      let dif = currentOffset - this.Offset;
 
-  return(
-        <View style={{height:'100%', width:'100%'}}>
-            <FlatList
-              onScroll={e => onScroll(e)}
-              keyExtractor={(item)=>item.key}
-              data={countries}
-              renderItem={({item})=>(
-                <View style={styles.display}>
-                  <Text style={styles.text}>{item.country}</Text>
-                  <Text style={styles.text}>{item.capital}</Text>
-                </View>
-              )}
-             />
-        </View>
-  )
+      if (Math.abs(dif) < 20)
+        return
+
+      if (dif < 0) {
+        this.props.navigation.setParams({ showTabBar: true });
+      } else {
+        this.props.navigation.setParams({ showTabBar: false });
+      }
+
+      this.Offset = currentOffset;
+  
+    };
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <RecyclerListView
+          rowRenderer={this._rowRender}
+          dataProvider={this.state.dataProvider}
+          layoutProvider={this._layoutProvider}
+          onScroll={e => this._onScroll(e)}    
+        />
+      </View>
+    );
+  }
+
 }
+
 function Screen1() {
   return (
     <View style={styles.display1}>
@@ -172,6 +97,7 @@ function Screen1() {
     </View>
   );
 }
+
 function Screen2() {
   return (
     <View style={styles.display2}>
@@ -185,13 +111,14 @@ function App() {
     if (!navState) {
       return true;
     }
-
+  
     let tabBarVisible = navState.routes[navState.index].params
       ? navState.routes[navState.index].params.showTabBar
       : true;
 
     return tabBarVisible;
   };
+
   return (
     <View style={{width: '100%', height: '100%'}}>
       <NavigationContainer>
@@ -201,13 +128,11 @@ function App() {
               let iconName;
 
               if (route.name === 'Home') {
-                iconName = focused ? 'home' : 'home';
+                iconName = 'home';
               } else if (route.name === 'Screen1') {
-                iconName = focused
-                  ? 'arrow-circle-right'
-                  : 'arrow-circle-right';
+                iconName = 'arrow-circle-right';
               } else if (route.name === 'Screen2') {
-                iconName = focused ? 'telegram' : 'telegram';
+                iconName = 'telegram';
               }
 
               // You can return any component that you like here!
@@ -226,7 +151,8 @@ function App() {
             activeTintColor: 'tomato',
             inactiveTintColor: 'green',
             style: {height: 50},
-          }}>
+          }}
+        >
           <Tab.Screen name="Home" component={Home} listeners={{}} />
           <Tab.Screen name="Screen1" component={Screen1} />
           <Tab.Screen name="Screen2" component={Screen2} />
@@ -275,4 +201,6 @@ const styles = StyleSheet.create({
     
 },
 });
+      
+      
 export default App;
